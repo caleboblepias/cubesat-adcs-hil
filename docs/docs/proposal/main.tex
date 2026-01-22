@@ -1,0 +1,78 @@
+\documentclass[11pt]{article}
+
+% --------------------
+% Packages
+% --------------------
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{setspace}
+
+\setlength{\parskip}{0.75em}
+\setlength{\parindent}{0pt}
+
+% --------------------
+% Title Info
+% --------------------
+\title{\textbf{CubeSat Attitude Determination and Control System \\
+Hardware-in-the-Loop Validation Using a 3-DOF Air Bearing Project Proposal}}
+\author{Caleb Oblepias}
+\date{\today}
+
+% --------------------
+% Document
+% --------------------
+\begin{document}
+
+\maketitle
+
+\vspace{-1em}
+
+\section{Objective}
+The objective of this project is to classify performance metrics and system objectives for a three-axis CubeSat Attitude Determination and Control System (ADCS). The system will be evaluated through a hardware-in-the-loop (HIL) testbed mounted on a three-degree-of-freedom air bearing representative of space conditions.
+
+\section{System Overview}
+A flight-representative CubeSat platform will be mounted on a 3-DOF air bearing
+to enable near-frictionless rotation. Attitude actuation will be provided by a
+set of reaction wheels, while onboard sensors provide state feedback. A microcontroller executes
+the ADCS algorithms in real time, interfacing with both physical hardware and a dynamics simulator.
+
+\section{ADCS Architecture}
+Attitude estimation is performed using sensor fusion techniques to estimate
+spacecraft attitude and angular rate. Control laws generate reaction wheel
+torque commands to perform detumbling, orientation transition (slew maneuvers), and steady-state
+pointing. The controller is designed to respect actuator limits while
+maintaining stability and performance.
+
+\section{Hardware-in-the-Loop Framework}
+The HIL framework couples the physical spacecraft-representative hardware with a simulated orbital
+environment. Reaction wheel torques are applied to the air-bearing platform,
+while environmental effects and sensor noise are injected through simulation.
+This enables validation of control performance and timing
+under realistic operating conditions.
+
+\section{Performance Metrics}
+The system will be evaluated using quantitative metrics including:
+\begin{itemize}[leftmargin=1.5em]
+  \item Detumbling to angular rates below ? deg/s
+  \item Detumbling time below ? s
+  \item Steady-state pointing error below ? deg
+  \item Slew maneuver settling time under ? s
+  \item Real-time firmware performance
+\end{itemize}
+
+\section{Expected Outcomes}
+This project will deliver a fully integrated CubeSat ADCS HIL testbed,
+experimental validation of closed-loop real-time attitude control, quantified detumbling/pointing/slew  maneuver demonstrations, and documented
+lessons learned applicable to flight CubeSat missions.
+
+\vspace{1em}
+\rule{\linewidth}{0.4pt}
+
+
+\end{document}
+

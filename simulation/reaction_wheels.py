@@ -1,7 +1,7 @@
 import numpy as np
 
 
-# wheel allocation matrix formation ------------------------------------------------
+# wheel allocation matrix formation -----------------------------------------
 # inputs:
 #  - wheel_axes [nx3]
 # outputs:

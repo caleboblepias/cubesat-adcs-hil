@@ -15,6 +15,7 @@ w_log = []
 q_log = []
 wheel_log = []
 error_log = []
+q_err_log = []
 
 # simulation parameters
 dt = 0.01
@@ -34,9 +35,9 @@ wheel_axes = np.array([
 ])
 
 A = wheel_axes.T
-A_pinv = np.linalg.pinv(A)
+A_pinv = np.linalg.pinv(A) # Uses Moore Penrose
 
-Jw = np.array([1e-5, 1e-5, 1e-5, 1e-5])
+Jw = np.array([1e-5, 1e-5, 1e-5, 1e-5]) # kg * m^2 
 wheel_speeds = np.zeros(4)
 
 # max wheel speeds
@@ -46,9 +47,9 @@ omega_max = 6000 * 2*np.pi/60 # 6000 RPM = ~628 rad/s
 tau_max = 0.002 # 2 mN * m
 
 # controller gains
-Kp = np.diag([0.005, 0.005, 0.005])
+Kp = np.diag([0.0016, 0.0016, 0.0016])
 Kd = np.diag([0.003, 0.003, 0.003])
-Ki = np.diag([0.0001, 0.0001, 0.0001])
+Ki = np.diag([0.0, 0.0, 0.0])
 #Ki = np.diag([0, 0, 0])
 
 controller = PIDController(Kp, Ki, Kd)
@@ -56,10 +57,10 @@ controller = PIDController(Kp, Ki, Kd)
 # initial state
 w = np.zeros(3)
 
-q = np.array([1, 0, 0, 0])   # current attitude
+q = np.array([0, 0, 0, 1]) # current attitude
 
-#q_des = np.array([0, 0, 0, 1])  # desired attitude 180 deg turn
-q_des = np.array([0.9239, 0, 0, 0.3827]) # 45 deg turn
+q_des = np.array([0.8939967, 0, 0, -0.4480736]) # desired attitude 180 deg turn
+#q_des = np.array([0.9239, 0, 0, 0.3827]) # 45 deg turn
 
 # simulation loop
 for k in range(steps):
@@ -112,6 +113,7 @@ for k in range(steps):
         print("attitude:", q)
         print("angular velocity:", w)
         print("wheel speeds:", wheel_speeds)
+        print("q_err:", q_err)
         print()
 
     # logging
@@ -120,6 +122,7 @@ for k in range(steps):
     q_log.append(q.copy())
     wheel_log.append(wheel_speeds.copy())
     error_log.append(theta)
+    q_err_log.append(q_err)
     
 
 
@@ -129,8 +132,9 @@ w_log = np.array(w_log)
 q_log = np.array(q_log)
 wheel_log = np.array(wheel_log)
 error_log = np.array(error_log)
+q_err_log = np.array(q_err_log)
 
-fig, axs = plt.subplots(4, 1, figsize=(10, 12), sharex=True)
+fig, axs = plt.subplots(5, 1, figsize=(10, 12), sharex=True)
 
 
 # angular velocity
@@ -168,6 +172,13 @@ axs[3].set_title("Attitude Error Magnitude")
 axs[3].set_xlabel("Time (s)")
 axs[3].set_ylabel("error")
 axs[3].grid()
+
+# quaternion error
+axs[4].plot(time_log, q_err_log)
+axs[4].set_title("Quaternion Error")
+axs[4].set_xlabel("Time (s)")
+axs[4].set_ylabel("error")
+axs[4].grid()
 
 
 plt.tight_layout()

@@ -1,7 +1,7 @@
 import numpy as np
 from rk4 import rk4
 
-# rigid body dynamics ------------------------------------------------
+# rigid body dynamics --------------------------------------------
 # calculates Euler's rotation equation each timestep
 # inputs: 
 #  - wc : current angular velocity, [3x1]

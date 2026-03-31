@@ -1,0 +1,29 @@
+# Vivado project files
+*.xpr
+*.cache/
+*.runs/
+*.sim/
+*.hw/
+*.ip_user_files/
+*.gen/
+*.srcs/sources_1/bd/*/ip/*/synth/
+*.srcs/sources_1/bd/*/ip/*/sim/
+
+# Logs & reports
+*.log
+*.jou
+*.str
+*.pb
+*.wdb
+*.wcfg
+
+# Generated files
+*.bit
+*.bin
+*.ltx
+
+# Temporary/editor
+*.tmp
+*.backup
+*.swp
+.DS_Store

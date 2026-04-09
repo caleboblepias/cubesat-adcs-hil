@@ -1,0 +1,76 @@
+# =========================
+
+# Build outputs
+
+# =========================
+
+*.elf
+*.bin
+*.hex
+*.map
+*.o
+*.d
+
+build/
+out/
+Debug/
+Release/
+
+# =========================
+
+# Toolchain / temp files
+
+# =========================
+
+*.lst
+*.log
+
+# =========================
+
+# VSCode
+
+# =========================
+
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# =========================
+
+# OS files
+
+# =========================
+
+.DS_Store
+Thumbs.db
+
+# =========================
+
+# CMake (if you ever use it)
+
+# =========================
+
+CMakeFiles/
+CMakeCache.txt
+cmake-build-*/
+
+# =========================
+
+# Python (if you script builds/tests)
+
+# =========================
+
+**pycache**/
+*.pyc
+
+# =========================
+
+# Backup / temp
+
+# =========================
+
+*~
+*.swp
+*.bak
+

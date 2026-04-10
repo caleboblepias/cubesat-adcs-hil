@@ -1,22 +1,27 @@
-#ifndef STM32F103xB
-#define STM32F103xB
-#endif
-
 #include "stm32f1xx.h"
+#include "spi.h"
 #include <stdint.h>
+
 
 static void delay(void) {
     for (volatile uint32_t i = 0; i < 300000; i++) {}
 }
 
 int main(void) {
-    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
+    spi_init();
 
-    GPIOA->CRL &= ~(GPIO_CRL_MODE5 | GPIO_CRL_CNF5);
-    GPIOA->CRL |= GPIO_CRL_MODE5_1; // PA5 output, 2 MHz, push-pull
+    uint8_t data = 0x01;
+    uint8_t received;
 
-    while (1) {
-        GPIOA->ODR ^= (1U << 5);
+    CS_LOW();
+
+    for (int i = 0; i < 10; ++i) {
+        received = spi_transfer(data);
         delay();
     }
+
+    spi_wait_idle();
+    CS_HIGH();
+
+    while (1);
 }

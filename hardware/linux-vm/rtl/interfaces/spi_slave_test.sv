@@ -1,34 +1,38 @@
 module spi_slave_test (
-    input  logic clk,
-    input  logic rst,
+    	input  logic clk,
 
-    // SPI pins
-    input  logic sclk,
-    input  logic cs,
-    input  logic mosi,
-    output logic miso
+	// SPI pins
+	input  logic sclk,
+	input  logic cs,
+	input  logic mosi,
+	output logic miso
 );
 
-    logic done;
-    logic [7:0] received_data;
-    logic [7:0] tx_data;
+	logic done;
+	logic [7:0] received_data;
+	logic [7:0] tx_data;
 
-    // Instantiate your SPI slave
-    spi_slave spi_inst (
-        .clk(clk),
-        .rst(rst),
-        .sclk(sclk),
-        .cs(cs),
-        .mosi(mosi),
-        .tx_data(tx_data),
-        .miso(miso),
-        .done(done),
-        .received_data(received_data)
-    );
 
-    // Simple "application logic"
-    // When we receive a byte, prepare next TX byte
-
+    	spi_slave spi_inst (
+        	.clk(clk),
+        	.rst(1'b0),
+        	.sclk(sclk),
+        	.cs(cs),	
+		.mosi(mosi),
+		.tx_data(tx_data),
+		.miso(miso),
+		.done(done),
+		.received_data(received_data)
+	);
+	
+	assign tx_data = 8'hA5;
+	// When we receive a byte, prepare next TX byte
+    /*
+    logic rst_reg = 1;
+    assign rst = rst_reg;
+    always_ff @(posedge clk) begin
+	    rst_reg <= 0;
+    end
     always_ff @(posedge clk) begin
         if (rst) begin
             tx_data <= 8'h00;
@@ -38,5 +42,7 @@ module spi_slave_test (
             end
         end
     end
+    */
+    
 
 endmodule

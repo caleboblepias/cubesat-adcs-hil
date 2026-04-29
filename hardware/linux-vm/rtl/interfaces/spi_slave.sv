@@ -77,6 +77,7 @@ module spi_slave (
 	assign byte_done_in = bit_count_in == 7 && sclk_rising;
 
 	always_ff @ (posedge clk) begin
+		
 		if (rst) begin
 		        shift_reg_in <= 0;
         		bit_count_in <= 0;
@@ -112,8 +113,9 @@ module spi_slave (
 				end
 			endcase
 		end
+		
 	end
-				
-	assign miso = shift_reg_out[7];
+	assign miso = 1'b1;			
+	//assign miso = shift_reg_out[7];
 
 endmodule

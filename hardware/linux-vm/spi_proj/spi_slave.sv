@@ -18,26 +18,26 @@ module spi_slave (
 
 	state_t state, next_state;
 
-	logic sclk_delayed;
-        logic sclk_rising;
-	logic sclk_falling;
+	//logic sclk_delayed;
+        //logic sclk_rising;
+	//logic sclk_falling;
 
-        assign sclk_rising = (sclk && !sclk_delayed);
-        assign sclk_falling = (!sclk && sclk_delayed);
+        //assign sclk_rising = (sclk && !sclk_delayed);
+        //assign sclk_falling = (!sclk && sclk_delayed);
 
-	logic cs_delayed;
-	logic cs_falling;
+	//logic cs_delayed;
+	//logic cs_falling;
 
-	assign cs_falling = (!cs && cs_delayed);
+	//assign cs_falling = (!cs && cs_delayed);
 
 	always_ff @ (posedge clk) begin
 		if (rst) begin
 			state <= IDLE;
-			sclk_delayed <= 0;
-			cs_delayed <= 0;
+			//sclk_delayed <= 0;
+			//cs_delayed <= 0;
 		end else begin
-			sclk_delayed <= sclk;
-			cs_delayed <= cs;
+			//sclk_delayed <= sclk;
+			//cs_delayed <= cs;
 			state <= next_state;
 		end
 	end
@@ -74,8 +74,8 @@ module spi_slave (
 
 	logic [7:0] shift_reg_out;
 
-	assign byte_done_in = bit_count_in == 7 && sclk_rising;
-
+	//assign byte_done_in = bit_count_in == 7 && sclk_rising;
+	/*
 	always_ff @ (posedge clk) begin
 		if (rst) begin
 		        shift_reg_in <= 0;
@@ -102,7 +102,7 @@ module spi_slave (
 					end
 
 					if (sclk_falling) begin
-						shift_reg_out <= {shift_reg_out[6:0], 0};
+						shift_reg_out <= {shift_reg_out[6:0], 1'b0};
 					end
 				end
 
@@ -113,7 +113,35 @@ module spi_slave (
 			endcase
 		end
 	end
-				
+	*/
+
+
+	always_ff @(posedge sclk or posedge cs) begin
+		if (cs) begin
+			bit_count_in <= 0;
+			shift_reg_in <= 0;
+			byte_done_in <= 0;
+		end else begin
+			shift_reg_in <= {shift_reg_in[6:0], mosi};
+
+			if (bit_count_in == 3'd7) begin
+            			bit_count_in <= 0;
+            			byte_done_in <= 1;
+        		end else begin
+            			bit_count_in <= bit_count_in + 1;
+            			byte_done_in <= 0;
+        		end
+			
+		end
+	end
+	always_ff @(negedge sclk or posedge cs) begin
+		if (cs) begin
+			shift_reg_out <= tx_data;
+		end else begin
+			shift_reg_out <= {shift_reg_out[6:0], 1'b0};
+		end
+	end
+	//assign miso = 1'b0;			
 	assign miso = shift_reg_out[7];
 
 endmodule

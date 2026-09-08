@@ -2,8 +2,6 @@
 #include <stdint.h>
 #include "stm32f1xx.h"
 
-
-
 // initialize
 void spi_init(void) {
 

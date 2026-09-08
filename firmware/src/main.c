@@ -4,24 +4,32 @@
 
 
 static void delay(void) {
-    for (volatile uint32_t i = 0; i < 300000; i++) {}
+    for (volatile uint32_t i = 0; i < 30000; i++) {}
 }
 
 int main(void) {
     spi_init();
 
-    uint8_t data = 0x01;
-    uint8_t received;
+    
 
+    // write
     CS_LOW();
-
-    for (int i = 0; i < 10; ++i) {
-        received = spi_transfer(data);
-        delay();
-    }
-
+    spi_transfer(0x01);
+    spi_transfer(0x05);
+    spi_transfer(0xA7);
     spi_wait_idle();
     CS_HIGH();
+
+    // read
+    CS_LOW();
+    spi_transfer(0x02);
+    spi_transfer(0x05);
+    spi_transfer(0x00);
+    volatile uint8_t result = spi_transfer(0x00);
+    spi_wait_idle();
+    CS_HIGH();
+
+    
 
     while (1);
 }

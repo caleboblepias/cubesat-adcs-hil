@@ -1,5 +1,5 @@
 import numpy as np
-from rk4 import rk4
+from .rk4 import rk4
 
 # rigid body dynamics --------------------------------------------
 # calculates Euler's rotation equation each timestep

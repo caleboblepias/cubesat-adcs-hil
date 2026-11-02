@@ -1,35 +1,29 @@
 #include "stm32f1xx.h"
-#include "spi.h"
-#include <stdint.h>
+#include "FreeRTOS.h"
+#include "task.h"
 
+#include "tasks.h"
+#include "timer.h"
+#include "uart.h"
+#include "gpio.h"
 
-static void delay(void) {
-    for (volatile uint32_t i = 0; i < 30000; i++) {}
-}
+int main(void)
+{
+    SystemCoreClockUpdate();
 
-int main(void) {
-    spi_init();
+    uart_init();
+    gpio_init();
+    uart_print("Starting FreeRTOS...\r\n");
 
-    
+    if (Tasks_Init() != pdPASS)
+    {
+        uart_print("Task creation failed!\r\n");
+        while (1);
+    }
 
-    // write
-    CS_LOW();
-    spi_transfer(0x01);
-    spi_transfer(0x05);
-    spi_transfer(0xA7);
-    spi_wait_idle();
-    CS_HIGH();
+    timer_init();
 
-    // read
-    CS_LOW();
-    spi_transfer(0x02);
-    spi_transfer(0x05);
-    spi_transfer(0x00);
-    volatile uint8_t result = spi_transfer(0x00);
-    spi_wait_idle();
-    CS_HIGH();
-
-    
+    vTaskStartScheduler();
 
     while (1);
 }

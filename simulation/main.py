@@ -1,13 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from rotational_dynamics import imu_emulator
-from quaternion_formation import propagate_quaternion
-from attitude_error import quaternion_error
-from controller import PIDController
-from reaction_wheels import allocate_wheel_torques
-from reaction_wheels import propagate_wheel_speeds
-from reaction_wheels import compute_body_torque
+from .rotational_dynamics import imu_emulator
+from .quaternion_formation import propagate_quaternion
+from .attitude_error import quaternion_error
+from .controller import PIDController
+from .reaction_wheels import allocate_wheel_torques
+from .reaction_wheels import propagate_wheel_speeds
+from .reaction_wheels import compute_body_torque
 
 # logging
 time_log = []

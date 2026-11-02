@@ -1,3 +1,4 @@
+
 #!/bin/bash
 set -e
 
@@ -12,12 +13,12 @@ SIZE=arm-none-eabi-size
 # Flags
 
 CFLAGS="
--mcpu=cortex-m3 
--mthumb 
--O0 
--g 
--ffunction-sections 
--fdata-sections 
+-mcpu=cortex-m3
+-mthumb
+-O0
+-g
+-ffunction-sections
+-fdata-sections
 -Wall
 -Wextra
 "
@@ -27,9 +28,10 @@ DEFINES="
 "
 
 INCLUDES="
--Iinc 
--Icmsis 
+-Iinc
+-Icmsis
 -Isrc
+-Irtos/include
 "
 
 # Linker
@@ -44,41 +46,54 @@ mkdir -p build
 
 echo "======================================= Compiling ========================================="
 
-$CC $CFLAGS $DEFINES $INCLUDES -c src/main.c -o build/main.o
-$CC $CFLAGS $DEFINES $INCLUDES -c src/system_stm32f1xx.c -o build/system.o
-$CC $CFLAGS $DEFINES $INCLUDES -c src/spi.c -o build/spi.o
+# Automatically discover application and FreeRTOS sources
+OBJECTS=()
 
+for SRC in src/*.c rtos/*.c; do
+    OBJ="build/${SRC%.c}.o"
+
+    mkdir -p "$(dirname "$OBJ")"
+
+    echo "Compiling $SRC"
+
+    $CC $CFLAGS $DEFINES $INCLUDES \
+        -c "$SRC" \
+        -o "$OBJ"
+
+    OBJECTS+=("$OBJ")
+done
+
+# Startup
 $CC \
 -mcpu=cortex-m3 -mthumb \
 -c src/startup_stm32f103xb.s \
 -o build/startup.o
 
+OBJECTS+=("build/startup.o")
+
 echo "======================================== Linking =========================================="
 
 $CC \
 -mcpu=cortex-m3 -mthumb \
-build/main.o \
-build/system.o \
-build/spi.o \
-build/startup.o \
--T $LDSCRIPT \
+"${OBJECTS[@]}" \
+-T "$LDSCRIPT" \
 -nostartfiles \
--nostdlib \
+--specs=nosys.specs \
 -Wl,--gc-sections \
 -Wl,-Map=build/firmware.map \
--o $OUT.elf
+-o "$OUT.elf"
 
 echo "========================================= Size ============================================"
 
-$SIZE $OUT.elf
+$SIZE "$OUT.elf"
 
 echo "================================= Generating binary/hex ==================================="
 
-$OBJCOPY -O binary $OUT.elf $OUT.bin
-$OBJCOPY -O ihex   $OUT.elf $OUT.hex
+$OBJCOPY -O binary "$OUT.elf" "$OUT.bin"
+$OBJCOPY -O ihex   "$OUT.elf" "$OUT.hex"
 
 echo "======================================= Flashing =========================================="
 
-st-flash --connect-under-reset write $OUT.bin 0x08000000
+st-flash --connect-under-reset write "$OUT.bin" 0x08000000
 
 echo "========================================= Done ============================================"

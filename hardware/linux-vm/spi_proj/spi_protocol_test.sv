@@ -27,11 +27,21 @@ module spi_protocol_test (
 
         // ================= FAKE REGISTER FILE =================
         logic [7:0] regs [0:255];
+	logic [7:0] rdata_reg;
+	/*
+	initial begin
+    		integer i;
+    		for (i = 0; i < 256; i = i + 1) begin
+        		regs[i] = i; 
+    		end
+	end
+	*/
 
         // simple memory behavior
         always_ff @(posedge sclk) begin
                 if (we)
                         regs[waddr] <= wdata;
+		
         end
 
         assign rdata = regs[raddr];
@@ -68,6 +78,6 @@ module spi_protocol_test (
         assign done = rx_valid;
 
         // show last received byte LSBs
-        assign debug_received = rx_data[2:0];
+        assign debug_received = dut.state;
 
 endmodule

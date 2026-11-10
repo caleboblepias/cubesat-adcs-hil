@@ -19,18 +19,21 @@ module spi_protocol (
 
 );
 
-	typedef enum logic [1:0] {
+	typedef enum logic [2:0] {
 		WAIT_CMD,
 		WAIT_ADDR,
-		WAIT_DATA
+		WAIT_DATA,
+		READ_DATA,
+		LOAD_DATA
 	} state_t;
 
 	state_t state, next_state;
 
 	logic [7:0] cmd;
 	logic [7:0] addr;
+	logic [7:0] rdata_reg;
 	
-	always_ff @(posedge sclk) begin
+	always_ff @(posedge sclk or posedge cs) begin
 		if (cs) begin
 			state <= WAIT_CMD;
 		end else begin
@@ -52,12 +55,24 @@ module spi_protocol (
 					if (cmd == 8'h01) begin
 						next_state = WAIT_DATA;
 					end else if (cmd == 8'h02) begin
-						next_state = WAIT_CMD;
+						next_state = READ_DATA;
 					end
 				end
 			end
 
 			WAIT_DATA: begin
+				if (rx_valid) begin
+					next_state = WAIT_CMD;
+				end
+			end
+
+			READ_DATA: begin
+				if (rx_valid) begin
+					next_state = LOAD_DATA;
+				end
+			end
+
+			LOAD_DATA: begin
 				if (rx_valid) begin
 					next_state = WAIT_CMD;
 				end
@@ -81,18 +96,22 @@ module spi_protocol (
 			tx_data <= 0;
 
 			read_pending <= 0;
+			rdata_reg <= 0;
 		end else begin
 			we <= 0;
 
 			// pending read handling
+			/*
 			if (read_pending && rx_valid) begin
 				tx_data <= rdata;
 				read_pending <= 0;
 			end
+			*/
 			case (state)
 				WAIT_CMD: begin
 					if (rx_valid) begin
 						cmd <= rx_data;
+						//tx_data <= rdata_reg;
 					end
 				end
 
@@ -102,7 +121,7 @@ module spi_protocol (
 						raddr <= rx_data;
 
 						if (cmd == 8'h02) begin
-							read_pending <= 1;
+							//read_pending <= 1;
 						end
 					end
 				end
@@ -114,7 +133,20 @@ module spi_protocol (
 						wdata <= rx_data;
 					end
 				end
+
+				READ_DATA: begin
+					if (rx_valid) begin
+						tx_data <= 8'hA7;
 				
+					end
+				end
+
+				LOAD_DATA: begin
+					if (rx_valid) begin
+						//tx_data <= rdata;
+					end
+				end
+
 			endcase
 
 		end
